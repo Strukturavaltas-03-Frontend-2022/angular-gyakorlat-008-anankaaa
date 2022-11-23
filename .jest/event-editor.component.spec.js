@@ -773,9 +773,9 @@
     }
   }
   function patchEventPrototype(global2, api) {
-    const Event = global2["Event"];
-    if (Event && Event.prototype) {
-      api.patchMethod(Event.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
+    const Event2 = global2["Event"];
+    if (Event2 && Event2.prototype) {
+      api.patchMethod(Event2.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
         self2[IMMEDIATE_PROPAGATION_SYMBOL] = true;
         delegate && delegate.apply(self2, args);
       });
@@ -43070,7 +43070,7 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
           return this.http.patch(`${this.eventsUrl}/${event.id}`, event);
         }
         create(event) {
-          return this.http.post(this.eventsUrl, event);
+          return this.http.post(`${this.eventsUrl}`, event);
         }
         remove(id) {
           return this.http.delete(`${this.eventsUrl}/${id}`);
@@ -50975,7 +50975,89 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
   var event_editor_component_default;
   var init_event_editor_component = __esm({
     "src/app/page/event-editor/event-editor.component.html"() {
-      event_editor_component_default = '<div class="row">\r\n  <div *ngIf="(event$ | async) as event" class="col-6 offset-3">\r\n    <form #eventForm="ngForm" (ngSubmit)="onUpdate(eventForm, event)">\r\n      <div class="form-group">\r\n        <label for="">Name</label>\r\n        <input name="name" [(ngModel)]="event.name" type="text" class="form-control" pattern=".{8,25}" required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.name?.valid" class="error-message">\r\n            The name must be minimum 8 maximum 25 characters.\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class="form-group">\r\n        <label for="">Date</label>\r\n        <input name="date" [(ngModel)]="event.date" type="text" class="form-control"\r\n          pattern="^([0-9]|1[0-2])\\/([0-9]|[1-2][0-9]|3[0-1])\\/\\d{4}" required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.date?.valid" class="error-message">\r\n            The date must be in format DD/MM/YYYY.\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class="form-group">\r\n        <label for="">Time</label>\r\n        <input name="time" [(ngModel)]="event.time" type="text" class="form-control" pattern="^(0[0-9]|1[0-2])(am|pm)"\r\n          required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.time?.valid" class="error-message">\r\n            The time must be HHam or HHpm.\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class="form-group">\r\n        <label for="">Country</label>\r\n        <input name="country" [(ngModel)]="event.location.country" type="text" class="form-control"\r\n          pattern="[A-Z\\s]{5,25}" required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.country?.valid" class="error-message">\r\n            The country must be minimum 5 maximum 25 characters and uppercase.\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class="form-group">\r\n        <label for="">City</label>\r\n        <input name="city" [(ngModel)]="event.location.city" type="text" class="form-control" pattern="^[A-Z].{4,24}"\r\n          required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.city?.valid" class="error-message">\r\n            The city must be minimum 5 maximum 25 characters and must start with\r\n            uppercase character.\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class="form-group">\r\n        <label for="">Address</label>\r\n        <input name="address" [(ngModel)]="event.location.address" type="text" class="form-control" pattern=".{10,50}"\r\n          required>\r\n        <div class="message">\r\n          <div [hidden]="eventForm.controls.address?.valid" class="error-message">\r\n            The address must be minimum 10 maximum 50 characters.\r\n          </div>\r\n        </div>\r\n      </div>\r\n\r\n      <button [disabled]="eventForm.invalid || updating" type="submit" class="btn btn-primary btn-block btn-lg">\r\n        <i *ngIf="!updating" class="fa fa-save"></i>\r\n        <i *ngIf="updating" class="fa fa-refresh"></i>\r\n      </button>\r\n    </form>\r\n  </div>\r\n</div>\r\n';
+      event_editor_component_default = `<div class="row">\r
+  <div *ngIf="event$ | async as event" class="col-6 offset-3">\r
+    <form #eventForm="ngForm" (ngSubmit)="onUpdate(eventForm, event)">\r
+      <div class="form-group">\r
+        <label for="">Name</label>\r
+        <input\r
+          name="name"\r
+          [(ngModel)]="event.name"\r
+          type="text"\r
+          class="form-control"\r
+          pattern=".{8,25}"\r
+          required\r
+        />\r
+        <div [hidden]="eventForm.controls['name']?.valid" class="error-message">\r
+          The name of the event must be minimum 8 and maximum 25 characters long!\r
+        </div>\r
+      </div>\r
+      <div class="form-group">\r
+        <label for="">Date</label>\r
+        <input\r
+          name="date"\r
+          [(ngModel)]="event.date"\r
+          type="text"\r
+          class="form-control"\r
+          pattern="/^(0[1-9]|[12]\\d|3[01])[\\/](0[1-9]|1[0-2])[\\/](19|20)\\d{2}$/gm"\r
+          required\r
+        />\r
+        <div [hidden]="eventForm.controls['date']?.valid" class="error-message">\r
+          The date must be the following: DD/MM/YY!\r
+        </div>\r
+      </div>\r
+      <div class="form-group">\r
+        <label for="">Time</label>\r
+        <input\r
+          name="time"\r
+          [(ngModel)]="event.time"\r
+          type="text"\r
+          class="form-control"\r
+          required\r
+          pattern="/(0\\d|1[0-2]):([0-5]\\d) (AM|PM)/g"\r
+        />\r
+        <div [hidden]="eventForm.controls['time']?.valid" class="error-message">\r
+          The time must be the following: 00:00 am/pm!\r
+        </div>\r
+      </div>\r
+      <div class="form-group">\r
+        <label for="">Location</label>\r
+        <input\r
+          name="location"\r
+          [(ngModel)]="event.location"\r
+          type="text"\r
+          class="form-control"\r
+          pattern="[A-Z].{4,24}"\r
+          required\r
+        />\r
+        <div [hidden]="eventForm.controls['location']?.valid" class="error-message">\r
+          The location must start with capital letter and must be minimum 5 and maximum 25 characters long!\r
+        </div>\r
+      </div>\r
+\r
+      <button type="submit" class="btn btn-primary btn-block btn-lg">\r
+        <i class="fa fa-save"></i>\r
+      </button>\r
+    </form>\r
+  </div>\r
+</div>\r
+`;
+    }
+  });
+
+  // src/app/model/event.ts
+  var Event;
+  var init_event = __esm({
+    "src/app/model/event.ts"() {
+      Event = class {
+        constructor() {
+          this.id = 0;
+          this.name = "";
+          this.date = "";
+          this.time = "";
+          this.location = "";
+        }
+      };
     }
   });
 
@@ -50989,24 +51071,22 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
       init_router();
       init_operators();
       init_event_service();
+      init_event();
       EventEditorComponent = class {
         constructor(activatedRoute, eventService, router) {
           this.activatedRoute = activatedRoute;
           this.eventService = eventService;
           this.router = router;
           this.event$ = this.activatedRoute.params.pipe(switchMap((params) => this.eventService.get(params["id"])));
-          this.updating = false;
+          this.event = new Event();
         }
         ngOnInit() {
         }
         onUpdate(form, event) {
-          this.updating = true;
           if (event.id === 0) {
-            this.eventService.create(event);
-            this.router.navigate([""]);
-          } else {
-            this.eventService.update(event).subscribe((ev) => this.router.navigate([""]));
+            this.eventService.create(event).subscribe((event2) => this.router.navigate(["/", "event"]));
           }
+          this.eventService.update(event).subscribe((event2) => this.router.navigate(["/", "event"]));
         }
       };
       EventEditorComponent = __decorateClass([

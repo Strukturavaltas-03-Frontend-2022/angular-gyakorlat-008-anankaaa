@@ -10,6 +10,7 @@ import { EventService } from 'src/app/service/event.service';
   styleUrls: ['./events-list.component.scss']
 })
 export class EventsListComponent implements OnInit {
+[x: string]: any;
 
   eventList$: Observable<Event[]> = this.eventService.getAll();
 
@@ -19,5 +20,9 @@ export class EventsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {}
+
+  onDelete(event: Event): void {
+    this.eventService.remove(event.id);
+  }
 
 }
